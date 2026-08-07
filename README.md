@@ -72,8 +72,8 @@ own wallet with `PAY_TO_ADDRESS` and `SOLANA_PAY_TO_ADDRESS`.
 | **Working code** | TypeScript, strict, ESM, Express. Runs on defaults with no config at all. |
 | **Dual-rail payments** | Every paid route offers Base *and* Solana; the caller picks. |
 | **`skill.md`** | The agent-facing capability file — endpoints, prices, schemas, payment instructions. |
-| **`/.well-known/x402`** | Machine-readable resource manifest for [x402scan](https://x402scan.com), the x402 Bazaar, and [agentic.market](https://agentic.market). |
-| **`openapi.json`** | OpenAPI 3.1, including the 402 challenge shape. |
+| **`openapi.json`** | Served at `/openapi.json` — the canonical discovery contract [x402scan](https://x402scan.com) reads. Payable operations carry `x-payment-info`. |
+| **`/.well-known/x402`** | Machine-readable resource manifest, for the x402 Bazaar and [agentic.market](https://agentic.market). |
 | **Docs site** | GitHub Pages: landing page, tutorial, API reference, and an agent integration guide. |
 | **Examples** | `x402-fetch` agent client, raw curl walkthrough, MCP tool recipe. |
 | **Apache-2.0** | Use it, fork it, sell it. |
@@ -203,6 +203,23 @@ test an entire purchase flow on testnet before touching anything live.
 
 [`catalog.json`](https://nirholas.github.io/x402-suite/catalog.json) — all fifty services, their
 endpoints, prices, and manifest URLs, in one file.
+
+## Discoverable by agents
+
+Each service is built to the [x402scan discovery spec](https://x402scan.com/discovery/spec) and
+audited with that project's own validator (`npx -y @agentcash/discovery@latest discover`), which
+reports **zero errors** for all 50:
+
+- **OpenAPI at `/openapi.json`** is the canonical contract x402scan reads — not the
+  `.well-known` manifest. Every payable operation declares `x-payment-info` (a structured USD
+  price plus `protocols: [{"x402": {}}]`) and a `402` response; public routes declare
+  `security: []` so they classify as unprotected rather than unknown.
+- **`info.x-guidance`** tells an agent, in prose, what the API is for and how to use it.
+- **The runtime 402 carries input and output schemas** (`accepts[].outputSchema`), derived from
+  the same OpenAPI document, so static metadata and live behaviour agree.
+- **The challenge always comes first.** Every paid route answers an unpaid request with 402 and a
+  populated `accepts` *before* any existence check, body validation, or upstream API call — the
+  rule registration probes depend on. Each one is verified against a synthetic request.
 
 ## Verified
 
