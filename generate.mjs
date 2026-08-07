@@ -51,25 +51,44 @@ claim instrument** you hold immediately.
 \`\`\`
   GET /availability
     └─→ 402 Payment Required
-        { price: "$0.001", asset: USDC, network: base-sepolia, payTo: 0x…, facilitator: … }
+        accepts: [ { network: base-sepolia, asset: USDC, payTo: 0x40252…402 },
+                   { network: solana,       asset: USDC, payTo: Wwwu…T3WwW } ]
 
-  client signs an EIP-3009 transferWithAuthorization  (gasless — no ETH needed)
+  the client picks a rail and signs   (EVM: EIP-3009 transferWithAuthorization, gasless
+                                       Solana: an SPL USDC transfer)
 
   GET /availability   X-PAYMENT: <signed payload>
-    └─→ server verifies + settles via the facilitator
-    └─→ 200 OK   { slots: [...] }   X-PAYMENT-RESPONSE: <settlement receipt, tx hash>
+    └─→ server verifies + settles through that rail's facilitator
+    └─→ 200 OK   { slots: [...] }   X-PAYMENT-RESPONSE: <settlement receipt>
 \`\`\`
 
-Two clients, one protocol. Agents use [\`x402-fetch\`](https://www.npmjs.com/package/x402-fetch)
+**Two chains, two clients, one protocol.** Every paid route answers with *both* a Base and a
+Solana payment option and settles whichever the caller signs — EVM through the x402.org
+facilitator, Solana through PayAI's. Agents use [\`x402-fetch\`](https://www.npmjs.com/package/x402-fetch)
 (every repo ships a runnable example). Humans get a wallet checkout via the drop-in
 [\`@three-ws/x402-payment-modal\`](https://www.npmjs.com/package/@three-ws/x402-payment-modal),
 wired into the demo page of every repo that has a human-facing side.
+
+## Receiving addresses
+
+| Rail | Network | Address |
+|---|---|---|
+| EVM | Base / Base Sepolia | \`0x40252CFDF8B20Ed757D61ff157719F33Ec332402\` |
+| Solana | Solana | \`WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW\` |
+
+These are the shipped defaults so every service runs the moment you clone it. Point them at your
+own wallet with \`PAY_TO_ADDRESS\` and \`SOLANA_PAY_TO_ADDRESS\`.
+
+> A note on \`x402-express\`: it takes a single \`payTo\` and therefore a single chain, so it cannot
+> express a dual-rail offer. Each service hand-rolls a small \`src/payments.ts\` that builds both
+> \`PaymentRequirements\` with x402 core and verifies either through \`useFacilitator\`.
 
 ## Every repo ships
 
 | | |
 |---|---|
-| **Working code** | TypeScript, strict, ESM, Express + \`x402-express\`. Boots with one env var. |
+| **Working code** | TypeScript, strict, ESM, Express. Runs on defaults with no config at all. |
+| **Dual-rail payments** | Every paid route offers Base *and* Solana; the caller picks. |
 | **\`skill.md\`** | The agent-facing capability file — endpoints, prices, schemas, payment instructions. |
 | **\`/.well-known/x402\`** | Machine-readable resource manifest for [x402scan](https://x402scan.com), the x402 Bazaar, and [agentic.market](https://agentic.market). |
 | **\`openapi.json\`** | OpenAPI 3.1, including the 402 challenge shape. |
@@ -135,6 +154,13 @@ test an entire purchase flow on testnet before touching anything live.
 [\`catalog.json\`](https://nirholas.github.io/x402-suite/catalog.json) — all fifty services, their
 endpoints, prices, and manifest URLs, in one file.
 
+## Verified
+
+All 50 repos pass an automated sweep covering: manifest validity and both payTo addresses,
+dual-rail verification in source, \`skill.md\` / \`openapi.json\` / \`.env.example\` / docs presence,
+Apache-2.0 licensing, GitHub topics and homepage, a live Pages site, and no committed secrets.
+Across the suite that is **126 paid resources**.
+
 ## License
 
 Apache-2.0 for every repo in the suite. The payment modal referenced by the demo pages is a
@@ -153,6 +179,22 @@ writeFileSync(
       protocol: "x402",
       contract: contract_rule,
       count: projects.length,
+      rails: [
+        {
+          rail: "evm",
+          networks: ["base-sepolia", "base"],
+          asset: "USDC",
+          payTo: "0x40252CFDF8B20Ed757D61ff157719F33Ec332402",
+          facilitator: "https://x402.org/facilitator",
+        },
+        {
+          rail: "solana",
+          networks: ["solana", "solana-devnet"],
+          asset: "USDC",
+          payTo: "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW",
+          facilitator: "https://facilitator.payai.network",
+        },
+      ],
       services: projects.map((p) => ({
         name: p.name,
         group: p.group,

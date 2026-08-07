@@ -4,6 +4,28 @@
   "protocol": "x402",
   "contract": "Every paid route MUST return the purchased artifact in the 200 response body (data, content, signed token, confirmation, or receipt-of-action). No pay-now-deliver-later routes. Async patterns become pay-per-poll (return snapshot+delta now) or return a signed claim instrument immediately.",
   "count": 50,
+  "rails": [
+    {
+      "rail": "evm",
+      "networks": [
+        "base-sepolia",
+        "base"
+      ],
+      "asset": "USDC",
+      "payTo": "0x40252CFDF8B20Ed757D61ff157719F33Ec332402",
+      "facilitator": "https://x402.org/facilitator"
+    },
+    {
+      "rail": "solana",
+      "networks": [
+        "solana",
+        "solana-devnet"
+      ],
+      "asset": "USDC",
+      "payTo": "WwwuGbqHrwF5RG89KhUbmRWEvjnRH9k5kVM5p7T3WwW",
+      "facilitator": "https://facilitator.payai.network"
+    }
+  ],
   "services": [
     {
       "name": "x402-tablebook",
