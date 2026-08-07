@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The x402 Suite — 50 services that let AI agents buy real things</title>
+<meta name="description" content="Fifty open-source services built on x402: agents pay USDC per request and get the goods back in the same response. Apache-2.0.">
+<style>
+  :root {
+    --bg: #ffffff; --fg: #12161f; --muted: #5b6472; --line: #e4e7ec;
+    --accent: #0052ff; --card: #ffffff; --code: #f6f7f9;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0b0e14; --fg: #e8ecf3; --muted: #98a2b3; --line: #232936;
+            --accent: #4d8bff; --card: #121722; --code: #151b26; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); line-height: 1.65;
+         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  header { padding: 88px 0 56px; border-bottom: 1px solid var(--line); }
+  .tag { display: inline-block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+         color: var(--accent); font-weight: 700; margin-bottom: 18px; }
+  h1 { font-size: clamp(34px, 6vw, 56px); line-height: 1.1; margin: 0 0 20px; letter-spacing: -.02em; }
+  .lede { font-size: clamp(17px, 2.4vw, 20px); color: var(--muted); max-width: 62ch; margin: 0 0 32px; }
+  .btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn { display: inline-block; padding: 11px 20px; border-radius: 8px; text-decoration: none;
+         font-weight: 600; font-size: 15px; border: 1px solid var(--line); color: var(--fg); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  section { padding: 56px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-size: 26px; margin: 0 0 14px; letter-spacing: -.01em; }
+  h3 { font-size: 21px; margin: 0 0 6px; }
+  p { max-width: 70ch; }
+  .blurb { color: var(--muted); margin: 0 0 22px; }
+  pre { background: var(--code); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px;
+        overflow-x: auto; font-size: 13.5px; line-height: 1.6; }
+  code { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; }
+  .rule { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; margin: 0 0 24px;
+          font-size: 17px; color: var(--fg); }
+  .grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr)); }
+  .card { display: block; padding: 16px 18px; border: 1px solid var(--line); border-radius: 10px;
+          background: var(--card); text-decoration: none; color: inherit; transition: border-color .15s, transform .15s; }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card h4 { margin: 0 0 6px; font-size: 15px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+             color: var(--accent); font-weight: 600; }
+  .card p { margin: 0 0 10px; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+  .card .meta { font-size: 12px; color: var(--muted); font-family: ui-monospace, Menlo, monospace; opacity: .8; }
+  .group { padding: 40px 0 8px; border: 0; }
+  .ships { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 8px; }
+  .ships div { border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; background: var(--card); }
+  .ships strong { display: block; margin-bottom: 4px; font-size: 14px; }
+  .ships span { font-size: 13.5px; color: var(--muted); }
+  footer { padding: 48px 0 72px; color: var(--muted); font-size: 14px; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <span class="tag">Apache-2.0 · 50 repositories</span>
+    <h1>Fifty services that let AI&nbsp;agents buy real things.</h1>
+    <p class="lede">x402 turns HTTP's forgotten <code>402 Payment Required</code> into a working
+      payment rail: the server names a price, the client signs a gasless USDC transfer, and the goods
+      come back in the same response. This suite is the commerce layer built on top of it — booking a
+      table, holding a flight, shipping a package, splitting a bill across six wallets.</p>
+    <div class="btns">
+      <a class="btn primary" href="https://github.com/nirholas/x402-suite">Browse the suite</a>
+      <a class="btn" href="https://github.com/nirholas/x402-tablebook">Start with tablebook</a>
+      <a class="btn" href="./catalog.json">catalog.json</a>
+    </div>
+  </div>
+</header>
+
+<section><div class="wrap">
+  <h2>One rule, fifty repos</h2>
+  <p class="rule">Every paid route returns the thing you bought, in the body of the same response.</p>
+  <p>You pay <code>POST /book</code> and the 200 <em>is</em> the reservation — id, confirmed time,
+  refund terms, calendar invite. Nothing is promised for later. Where a use case is inherently
+  asynchronous, it becomes pay-per-poll (a fresh snapshot plus the delta since your last check) or
+  returns a signed claim instrument you hold immediately.</p>
+  <pre><code>GET /availability
+  └─→ 402 Payment Required   { price: "$0.001", asset: USDC, network: base-sepolia, payTo: 0x… }
+
+client signs an EIP-3009 transferWithAuthorization   (gasless — no ETH needed)
+
+GET /availability   X-PAYMENT: &lt;signed payload&gt;
+  └─→ 200 OK   { slots: [ … ] }   X-PAYMENT-RESPONSE: &lt;settlement receipt&gt;</code></pre>
+</div></section>
+
+<section><div class="wrap">
+  <h2>What every repo ships</h2>
+  <div class="ships">
+    <div><strong>Working code</strong><span>TypeScript, ESM, Express + x402-express. Boots with one env var.</span></div>
+    <div><strong>skill.md</strong><span>The agent-facing capability file: endpoints, prices, schemas, how to pay.</span></div>
+    <div><strong>/.well-known/x402</strong><span>Machine-readable manifest for x402scan, the x402 Bazaar, and agentic.market.</span></div>
+    <div><strong>Docs site</strong><span>GitHub Pages with a tutorial, API reference, and agent integration guide.</span></div>
+    <div><strong>Examples</strong><span>x402-fetch agent client, raw curl walkthrough, MCP tool recipe.</span></div>
+    <div><strong>No paid keys</strong><span>Keyless APIs run live; keyed ones fall back to labeled fixtures.</span></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>The catalog</h2>
+      <section class="group">
+        <h3>Supply-side booking servers</h3>
+        <p class="blurb">Self-hosted servers a business runs itself, so the inventory is real by definition. An open-source Resy, Calendly, and storefront that AI agents can transact with directly.</p>
+        <div class="grid">
+        <a class="card" href="https://github.com/nirholas/x402-tablebook">
+          <h4>x402-tablebook</h4>
+          <p>Open-source Resy: a self-hosted restaurant reservation server that AI agents can book via x402 refundable holds</p>
+          <span class="meta">$0.001 · $0.01 refundable · free (auth by booker wallet)</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-bookable">
+          <h4>x402-bookable</h4>
+          <p>Self-hosted Calendly with x402: salons, doctors, consultants sell appointment slots directly to agents and humans</p>
+          <span class="meta">$0.001 · $0.01 refundable · free (auth)</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-classes">
+          <h4>x402-classes</h4>
+          <p>Class and session booking server — fitness studios and workshop hosts sell seats per-class via x402</p>
+          <span class="meta">$0.05</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-rentals">
+          <h4>x402-rentals</h4>
+          <p>Time-slot rental server for courts, rooms, and equipment — reserve and pay per block with x402</p>
+          <span class="meta">$0.001 · $0.02</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-queue">
+          <h4>x402-queue</h4>
+          <p>Live waitlist server — pay to join a queue, receive a signed position token, auto-refund if never served</p>
+          <span class="meta">$0.01 refundable</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-storefront">
+          <h4>x402-storefront</h4>
+          <p>Self-hosted store with x402 checkout — sell digital goods (delivered in-response) and physical goods (signed order confirmation)</p>
+          <span class="meta">per item</span>
+        </a>
+        </div>
+      </section>
+      <section class="group">
+        <h3>Services on real, live APIs</h3>
+        <p class="blurb">Backed by genuine upstream data — keyless APIs are called live out of the box; keyed APIs use free developer tiers and fall back to labeled fixtures so every demo runs without a single paid key.</p>
+        <div class="grid">
+        <a class="card" href="https://github.com/nirholas/x402-flight-search">
+          <h4>x402-flight-search</h4>
+          <p>Pay-per-query flight search over the Amadeus API — offers, live pricing, and fare-drop checks for agents</p>
+          <span class="meta">$0.005 · $0.003 · $0.002</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-hotel-search">
+          <h4>x402-hotel-search</h4>
+          <p>Pay-per-query hotel search and offer pricing over Amadeus — agents shop rooms without accounts</p>
+          <span class="meta">$0.005 · $0.003</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-transit">
+          <h4>x402-transit</h4>
+          <p>Transit trip planning and live delay snapshots from open GTFS/GTFS-RT feeds, priced per query</p>
+          <span class="meta">$0.002 · $0.001</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-campsites">
+          <h4>x402-campsites</h4>
+          <p>Campground search and availability from the official Recreation.gov RIDB API, per-lookup pricing</p>
+          <span class="meta">$0.002 · $0.003</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-activities">
+          <h4>x402-activities</h4>
+          <p>Tours and activities search via Amadeus — agents find bookable experiences by location</p>
+          <span class="meta">$0.003</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-places">
+          <h4>x402-places</h4>
+          <p>POI concierge over OpenStreetMap Overpass with optional Yelp enrichment — restaurants, cafes, anything, per query</p>
+          <span class="meta">$0.002 · $0.002</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-events">
+          <h4>x402-events</h4>
+          <p>Event search and on-sale checks over Ticketmaster Discovery — agents find real events and ticket windows</p>
+          <span class="meta">$0.003 · $0.002</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-movies">
+          <h4>x402-movies</h4>
+          <p>Movie catalog concierge over TMDB — search, details, and recommendations per query</p>
+          <span class="meta">$0.001 · $0.001 · $0.002</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-books">
+          <h4>x402-books</h4>
+          <p>Agents buy clean, chaptered full-text public-domain books — OpenLibrary search, Gutenberg delivery, in-response</p>
+          <span class="meta">$0.001 · $0.01</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-research">
+          <h4>x402-research</h4>
+          <p>Scholarly search over arXiv, Crossref, and Semantic Scholar — papers, citation graphs, formatted bibliographies</p>
+          <span class="meta">$0.002 · $0.003 · $0.005</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-news-wire">
+          <h4>x402-news-wire</h4>
+          <p>Global news query service over GDELT — article sets, timelines, and delta pulses, per query</p>
+          <span class="meta">$0.003 · $0.002</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-markets">
+          <h4>x402-markets</h4>
+          <p>Crypto prices via CoinGecko and SEC filings via EDGAR — real market data per lookup</p>
+          <span class="meta">$0.001 · $0.003</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-weather-guard">
+          <h4>x402-weather-guard</h4>
+          <p>Go/no-go weather decisions for plans — forecasts and verdicts from Open-Meteo/NWS, keyless and live</p>
+          <span class="meta">$0.001 · $0.002</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-carbon">
+          <h4>x402-carbon</h4>
+          <p>Grid carbon intensity now and best-window scheduling — keyless live data for green agents</p>
+          <span class="meta">$0.001 · $0.002</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-grocery">
+          <h4>x402-grocery</h4>
+          <p>Real grocery product search and cart building over the Kroger API, priced per operation</p>
+          <span class="meta">$0.002 · $0.005</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-shop-scout">
+          <h4>x402-shop-scout</h4>
+          <p>Live marketplace intelligence over eBay Browse — listings search and is-this-a-deal verdicts</p>
+          <span class="meta">$0.002 · $0.002</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-shipping">
+          <h4>x402-shipping</h4>
+          <p>Rate shopping and label generation via Shippo/EasyPost test mode — agents ship things, label returned in-response</p>
+          <span class="meta">$0.003 · $0.02</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-print-mail">
+          <h4>x402-print-mail</h4>
+          <p>Agents send physical letters and postcards via Lob's test environment — preview PDF returned in-response</p>
+          <span class="meta">$0.05</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-notify">
+          <h4>x402-notify</h4>
+          <p>Real message delivery per-message: Telegram bot messages and SMTP email with delivery receipts in-response</p>
+          <span class="meta">$0.002 · $0.002</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-domains">
+          <h4>x402-domains</h4>
+          <p>Authoritative domain availability and expiry intel via RDAP — keyless, live, per lookup</p>
+          <span class="meta">$0.001 · $0.005</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-github-bounty">
+          <h4>x402-github-bounty</h4>
+          <p>Fund GitHub issues with x402 — signed bounty certificates, merged-PR verification reports, settlement receipts</p>
+          <span class="meta">$0.01 + amount · $0.002 · free (auth)</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-podcasts">
+          <h4>x402-podcasts</h4>
+          <p>Podcast search and episode intel over the Podcast Index API, per query</p>
+          <span class="meta">$0.002 · $0.002</span>
+        </a>
+        </div>
+      </section>
+      <section class="group">
+        <h3>Agentic commerce infrastructure</h3>
+        <p class="blurb">The plumbing every paid agent service needs: discovery, refundable holds, wallet policy, receipts, approvals, and an MCP bridge into Claude and GPT.</p>
+        <div class="grid">
+        <a class="card" href="https://github.com/nirholas/x402-skill-md">
+          <h4>x402-skill-md</h4>
+          <p>The skill.md toolkit: generate and validate agent-discoverable skill files (the agentres.dev pattern) from OpenAPI specs</p>
+          <span class="meta">$0.01 · $0.002</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-skill-registry">
+          <h4>x402-skill-registry</h4>
+          <p>Searchable registry of x402-paid agent skills — register with a signed listing, agents search per query</p>
+          <span class="meta">$0.01 · $0.001</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-refund-hold">
+          <h4>x402-refund-hold</h4>
+          <p>The $0.01 refundable-hold pattern as drop-in Express middleware — charge a hold, auto-refund on failure, ledger included</p>
+          <span class="meta">$0.01 refundable</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-agent-wallet">
+          <h4>x402-agent-wallet</h4>
+          <p>Wallet policy daemon for agents — budgets, per-merchant caps, approval thresholds, signed policy verdicts</p>
+          <span class="meta">$0.001 · free (auth)</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-receipts">
+          <h4>x402-receipts</h4>
+          <p>Receipts and accounting for agent spending — enriched on-chain receipt lookups and ledger exports</p>
+          <span class="meta">$0.001 · $0.01</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-browser-bridge">
+          <h4>x402-browser-bridge</h4>
+          <p>Framework that turns any website flow into an x402-paid API — declare a flow in YAML, Puppeteer executes, artifact returned in-response</p>
+          <span class="meta">$0.05</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-otp-relay">
+          <h4>x402-otp-relay</h4>
+          <p>The 'code sent to your email' step, solved for agents — paid relay mailboxes, retrieved OTP codes returned in-response</p>
+          <span class="meta">$0.01 · $0.002</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-account-link">
+          <h4>x402-account-link</h4>
+          <p>One-time account linking vault for agent flows — encrypted credential links with scoped, expiring access tokens</p>
+          <span class="meta">$0.01 · $0.002</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-confirmations">
+          <h4>x402-confirmations</h4>
+          <p>Normalize any booking confirmation into a portable record — ICS invite and status snapshots per query</p>
+          <span class="meta">$0.005 · $0.001</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-agent-sandbox">
+          <h4>x402-agent-sandbox</h4>
+          <p>A fake town on testnet — mock restaurant, hotel, and store implementing the suite's exact contracts, for end-to-end agent purchase testing</p>
+          <span class="meta">$0.001 each</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-mcp-commerce">
+          <h4>x402-mcp-commerce</h4>
+          <p>MCP server that gives Claude/GPT agents commerce tools — each tool call pays an upstream x402 endpoint and returns its artifact</p>
+          <span class="meta">upstream prices</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-approval-page">
+          <h4>x402-approval-page</h4>
+          <p>Human-in-the-loop checkout: agent requests approval above its cap, human pays via the drop-in modal, agent fetches the signed outcome</p>
+          <span class="meta">$0.001</span>
+        </a>
+        </div>
+      </section>
+      <section class="group">
+        <h3>Frontier patterns</h3>
+        <p class="blurb">Things that only become possible once machines can pay: splitting a dinner bill across six wallets, agents negotiating with agents, gifting a task, reselling a held booking.</p>
+        <div class="grid">
+        <a class="card" href="https://github.com/nirholas/x402-group-pay">
+          <h4>x402-group-pay</h4>
+          <p>Split one booking across N wallets — the 6-person dinner problem: pooled x402 contributions with signed receipts and funded proofs</p>
+          <span class="meta">$0.001 · member share</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-concierge">
+          <h4>x402-concierge</h4>
+          <p>Meta-agent that composes paid skills — dinner + gift + transit in one request, with per-step receipts, powered by the suite</p>
+          <span class="meta">$0.02 + passthrough</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-rebooker">
+          <h4>x402-rebooker</h4>
+          <p>The cancel-worse-book-better move, automated — scans real inventory (Amadeus/RIDB) against your current booking, returns an actionable improvement report</p>
+          <span class="meta">$0.01</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-price-watch">
+          <h4>x402-price-watch</h4>
+          <p>Pay-per-poll price watching — every check returns a fresh snapshot plus delta vs your cursor (flights via Amadeus, crypto via CoinGecko)</p>
+          <span class="meta">$0.002</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-negotiator">
+          <h4>x402-negotiator</h4>
+          <p>Agent-to-agent price negotiation instruments — signed offers, counters, and agreements, each returned in-response</p>
+          <span class="meta">$0.001 · $0.001 · $0.001</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-recurring">
+          <h4>x402-recurring</h4>
+          <p>Standing orders for agents — mandate documents plus a client-side scheduler that pays per run and collects run reports</p>
+          <span class="meta">per mandate</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-gift-agent">
+          <h4>x402-gift-agent</h4>
+          <p>Fund someone else's agent task — buy a signed gift voucher, recipient's agent redeems it for execution with receipts</p>
+          <span class="meta">amount + $0.01 fee</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-transfer-market">
+          <h4>x402-transfer-market</h4>
+          <p>Transfer or resell held bookings between wallets — signed listings and reassigned booking tokens, all in-response</p>
+          <span class="meta">$0.005 · listing price</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-reputation">
+          <h4>x402-reputation</h4>
+          <p>Did the merchant actually deliver? Reliability scores computed from signed fulfillment attestations</p>
+          <span class="meta">$0.001 · $0.001</span>
+        </a>
+        <a class="card" href="https://github.com/nirholas/x402-disputes">
+          <h4>x402-disputes</h4>
+          <p>Arbitration for failed real-world tasks — signed case records with evidence hashes, status snapshots, and signed rulings</p>
+          <span class="meta">$0.01 · $0.001 · free (arbiter auth)</span>
+        </a>
+        </div>
+      </section>
+</div></section>
+
+<section><div class="wrap">
+  <h2>For AI agents</h2>
+  <p>Point an agent at any repo's <code>skill.md</code> and it can read what the service does, what
+  each call costs, what comes back, and how to pay. To hand Claude or GPT the whole suite as tools,
+  use <a href="https://github.com/nirholas/x402-mcp-commerce">x402-mcp-commerce</a> — every tool call
+  pays an upstream endpoint and returns the artifact with its receipt. Add
+  <a href="https://github.com/nirholas/x402-agent-wallet">x402-agent-wallet</a> for spending caps and
+  <a href="https://github.com/nirholas/x402-approval-page">x402-approval-page</a> to put a human in
+  the loop above a threshold. Build against
+  <a href="https://github.com/nirholas/x402-agent-sandbox">x402-agent-sandbox</a> first — a fake town
+  of merchants using the same contracts as the real servers.</p>
+</div></section>
+
+<footer><div class="wrap">
+  Apache-2.0 · built by <a href="https://github.com/nirholas">nirholas</a> ·
+  protocol by <a href="https://x402.org">x402.org</a>
+</div></footer>
+</body>
+</html>

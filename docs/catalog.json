@@ -1,0 +1,1134 @@
+{
+  "name": "x402 Suite",
+  "description": "Fifty open-source services that let AI agents buy real things, priced per request over x402.",
+  "protocol": "x402",
+  "contract": "Every paid route MUST return the purchased artifact in the 200 response body (data, content, signed token, confirmation, or receipt-of-action). No pay-now-deliver-later routes. Async patterns become pay-per-poll (return snapshot+delta now) or return a signed claim instrument immediately.",
+  "count": 50,
+  "services": [
+    {
+      "name": "x402-tablebook",
+      "group": "supply-side",
+      "description": "Open-source Resy: a self-hosted restaurant reservation server that AI agents can book via x402 refundable holds",
+      "repository": "https://github.com/nirholas/x402-tablebook",
+      "docs": "https://nirholas.github.io/x402-tablebook/",
+      "skill": "https://github.com/nirholas/x402-tablebook/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-tablebook/blob/main/public/.well-known/x402",
+      "dataSource": "self-hosted real inventory",
+      "endpoints": [
+        {
+          "route": "GET /availability",
+          "price": "$0.001",
+          "returns": "open slots JSON (date, time, party sizes, table types)"
+        },
+        {
+          "route": "POST /book",
+          "price": "$0.01 refundable",
+          "returns": "{reservationId, confirmedTime, party, refundTerms, ics (base64 calendar invite)}"
+        },
+        {
+          "route": "POST /cancel/:id",
+          "price": "free (auth by booker wallet)",
+          "returns": "cancellation record + refund ledger entry"
+        }
+      ]
+    },
+    {
+      "name": "x402-bookable",
+      "group": "supply-side",
+      "description": "Self-hosted Calendly with x402: salons, doctors, consultants sell appointment slots directly to agents and humans",
+      "repository": "https://github.com/nirholas/x402-bookable",
+      "docs": "https://nirholas.github.io/x402-bookable/",
+      "skill": "https://github.com/nirholas/x402-bookable/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-bookable/blob/main/public/.well-known/x402",
+      "dataSource": "self-hosted real inventory",
+      "endpoints": [
+        {
+          "route": "GET /slots",
+          "price": "$0.001",
+          "returns": "available slots for a service"
+        },
+        {
+          "route": "POST /appointments",
+          "price": "$0.01 refundable",
+          "returns": "{appointmentId, time, ics, meetingLink?, cancelPolicy}"
+        },
+        {
+          "route": "POST /cancel/:id",
+          "price": "free (auth)",
+          "returns": "cancellation + refund record"
+        }
+      ]
+    },
+    {
+      "name": "x402-classes",
+      "group": "supply-side",
+      "description": "Class and session booking server — fitness studios and workshop hosts sell seats per-class via x402",
+      "repository": "https://github.com/nirholas/x402-classes",
+      "docs": "https://nirholas.github.io/x402-classes/",
+      "skill": "https://github.com/nirholas/x402-classes/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-classes/blob/main/public/.well-known/x402",
+      "dataSource": "self-hosted real inventory",
+      "endpoints": [
+        {
+          "route": "GET /schedule",
+          "price": "free",
+          "returns": "class calendar with seat counts"
+        },
+        {
+          "route": "POST /enroll/:classId",
+          "price": "$0.05",
+          "returns": "{seatNumber, classDetails, ics, signed QR pass}"
+        }
+      ]
+    },
+    {
+      "name": "x402-rentals",
+      "group": "supply-side",
+      "description": "Time-slot rental server for courts, rooms, and equipment — reserve and pay per block with x402",
+      "repository": "https://github.com/nirholas/x402-rentals",
+      "docs": "https://nirholas.github.io/x402-rentals/",
+      "skill": "https://github.com/nirholas/x402-rentals/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-rentals/blob/main/public/.well-known/x402",
+      "dataSource": "self-hosted real inventory",
+      "endpoints": [
+        {
+          "route": "GET /inventory",
+          "price": "free",
+          "returns": "rentable items + calendars"
+        },
+        {
+          "route": "GET /quote",
+          "price": "$0.001",
+          "returns": "priced quote for item+window"
+        },
+        {
+          "route": "POST /reserve",
+          "price": "$0.02",
+          "returns": "{rentalId, accessCode, window, ics, terms}"
+        }
+      ]
+    },
+    {
+      "name": "x402-queue",
+      "group": "supply-side",
+      "description": "Live waitlist server — pay to join a queue, receive a signed position token, auto-refund if never served",
+      "repository": "https://github.com/nirholas/x402-queue",
+      "docs": "https://nirholas.github.io/x402-queue/",
+      "skill": "https://github.com/nirholas/x402-queue/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-queue/blob/main/public/.well-known/x402",
+      "dataSource": "self-hosted real inventory",
+      "endpoints": [
+        {
+          "route": "POST /join",
+          "price": "$0.01 refundable",
+          "returns": "signed queue-position token {position, eta, refundClaim}"
+        },
+        {
+          "route": "GET /position/:token",
+          "price": "free",
+          "returns": "live position + serve/refund status"
+        }
+      ]
+    },
+    {
+      "name": "x402-storefront",
+      "group": "supply-side",
+      "description": "Self-hosted store with x402 checkout — sell digital goods (delivered in-response) and physical goods (signed order confirmation)",
+      "repository": "https://github.com/nirholas/x402-storefront",
+      "docs": "https://nirholas.github.io/x402-storefront/",
+      "skill": "https://github.com/nirholas/x402-storefront/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-storefront/blob/main/public/.well-known/x402",
+      "dataSource": "self-hosted real inventory",
+      "endpoints": [
+        {
+          "route": "GET /catalog",
+          "price": "free",
+          "returns": "items"
+        },
+        {
+          "route": "GET /buy/:sku",
+          "price": "per item",
+          "returns": "digital: signed time-limited download URL + license; physical: signed order confirmation + fulfillment record"
+        }
+      ]
+    },
+    {
+      "name": "x402-flight-search",
+      "group": "real-api",
+      "description": "Pay-per-query flight search over the Amadeus API — offers, live pricing, and fare-drop checks for agents",
+      "repository": "https://github.com/nirholas/x402-flight-search",
+      "docs": "https://nirholas.github.io/x402-flight-search/",
+      "skill": "https://github.com/nirholas/x402-flight-search/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-flight-search/blob/main/public/.well-known/x402",
+      "dataSource": "Amadeus Self-Service (free sandbox, keyed: AMADEUS_CLIENT_ID/SECRET; fixture fallback)",
+      "endpoints": [
+        {
+          "route": "GET /search",
+          "price": "$0.005",
+          "returns": "flight offers JSON"
+        },
+        {
+          "route": "GET /price/:offerId",
+          "price": "$0.003",
+          "returns": "confirmed priced offer"
+        },
+        {
+          "route": "GET /check",
+          "price": "$0.002",
+          "returns": "current fare snapshot + delta vs caller-provided previous price (pay-per-poll watching)"
+        }
+      ]
+    },
+    {
+      "name": "x402-hotel-search",
+      "group": "real-api",
+      "description": "Pay-per-query hotel search and offer pricing over Amadeus — agents shop rooms without accounts",
+      "repository": "https://github.com/nirholas/x402-hotel-search",
+      "docs": "https://nirholas.github.io/x402-hotel-search/",
+      "skill": "https://github.com/nirholas/x402-hotel-search/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-hotel-search/blob/main/public/.well-known/x402",
+      "dataSource": "Amadeus (keyed, fixture fallback)",
+      "endpoints": [
+        {
+          "route": "GET /search",
+          "price": "$0.005",
+          "returns": "hotel offers by city/geo"
+        },
+        {
+          "route": "GET /offer/:id",
+          "price": "$0.003",
+          "returns": "priced offer detail"
+        }
+      ]
+    },
+    {
+      "name": "x402-transit",
+      "group": "real-api",
+      "description": "Transit trip planning and live delay snapshots from open GTFS/GTFS-RT feeds, priced per query",
+      "repository": "https://github.com/nirholas/x402-transit",
+      "docs": "https://nirholas.github.io/x402-transit/",
+      "skill": "https://github.com/nirholas/x402-transit/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-transit/blob/main/public/.well-known/x402",
+      "dataSource": "GTFS static + GTFS-RT public feeds (keyless)",
+      "endpoints": [
+        {
+          "route": "GET /plan",
+          "price": "$0.002",
+          "returns": "itinerary options"
+        },
+        {
+          "route": "GET /delays",
+          "price": "$0.001",
+          "returns": "live delay snapshot for route/stop"
+        }
+      ]
+    },
+    {
+      "name": "x402-campsites",
+      "group": "real-api",
+      "description": "Campground search and availability from the official Recreation.gov RIDB API, per-lookup pricing",
+      "repository": "https://github.com/nirholas/x402-campsites",
+      "docs": "https://nirholas.github.io/x402-campsites/",
+      "skill": "https://github.com/nirholas/x402-campsites/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-campsites/blob/main/public/.well-known/x402",
+      "dataSource": "Recreation.gov RIDB (free key; fixture fallback)",
+      "endpoints": [
+        {
+          "route": "GET /search",
+          "price": "$0.002",
+          "returns": "campgrounds + amenities"
+        },
+        {
+          "route": "GET /availability/:campgroundId",
+          "price": "$0.003",
+          "returns": "site-level availability for a date window"
+        }
+      ]
+    },
+    {
+      "name": "x402-activities",
+      "group": "real-api",
+      "description": "Tours and activities search via Amadeus — agents find bookable experiences by location",
+      "repository": "https://github.com/nirholas/x402-activities",
+      "docs": "https://nirholas.github.io/x402-activities/",
+      "skill": "https://github.com/nirholas/x402-activities/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-activities/blob/main/public/.well-known/x402",
+      "dataSource": "Amadeus Tours & Activities (keyed, fixture fallback)",
+      "endpoints": [
+        {
+          "route": "GET /search",
+          "price": "$0.003",
+          "returns": "activities with prices + booking links"
+        }
+      ]
+    },
+    {
+      "name": "x402-places",
+      "group": "real-api",
+      "description": "POI concierge over OpenStreetMap Overpass with optional Yelp enrichment — restaurants, cafes, anything, per query",
+      "repository": "https://github.com/nirholas/x402-places",
+      "docs": "https://nirholas.github.io/x402-places/",
+      "skill": "https://github.com/nirholas/x402-places/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-places/blob/main/public/.well-known/x402",
+      "dataSource": "Overpass (keyless) + Yelp Fusion (optional key)",
+      "endpoints": [
+        {
+          "route": "GET /search",
+          "price": "$0.002",
+          "returns": "POIs with hours, tags, contact"
+        },
+        {
+          "route": "GET /detail/:id",
+          "price": "$0.002",
+          "returns": "full record + reviews if Yelp key set"
+        }
+      ]
+    },
+    {
+      "name": "x402-events",
+      "group": "real-api",
+      "description": "Event search and on-sale checks over Ticketmaster Discovery — agents find real events and ticket windows",
+      "repository": "https://github.com/nirholas/x402-events",
+      "docs": "https://nirholas.github.io/x402-events/",
+      "skill": "https://github.com/nirholas/x402-events/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-events/blob/main/public/.well-known/x402",
+      "dataSource": "Ticketmaster Discovery (free key; fixture fallback)",
+      "endpoints": [
+        {
+          "route": "GET /search",
+          "price": "$0.003",
+          "returns": "events with venues, dates, price ranges"
+        },
+        {
+          "route": "GET /onsale-check/:eventId",
+          "price": "$0.002",
+          "returns": "current on-sale status + delta vs caller cursor"
+        }
+      ]
+    },
+    {
+      "name": "x402-movies",
+      "group": "real-api",
+      "description": "Movie catalog concierge over TMDB — search, details, and recommendations per query",
+      "repository": "https://github.com/nirholas/x402-movies",
+      "docs": "https://nirholas.github.io/x402-movies/",
+      "skill": "https://github.com/nirholas/x402-movies/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-movies/blob/main/public/.well-known/x402",
+      "dataSource": "TMDB (free key; fixture fallback)",
+      "endpoints": [
+        {
+          "route": "GET /search",
+          "price": "$0.001",
+          "returns": "matches"
+        },
+        {
+          "route": "GET /movie/:id",
+          "price": "$0.001",
+          "returns": "full detail bundle (cast, providers, dates)"
+        },
+        {
+          "route": "GET /recommendations/:id",
+          "price": "$0.002",
+          "returns": "ranked recs"
+        }
+      ]
+    },
+    {
+      "name": "x402-books",
+      "group": "real-api",
+      "description": "Agents buy clean, chaptered full-text public-domain books — OpenLibrary search, Gutenberg delivery, in-response",
+      "repository": "https://github.com/nirholas/x402-books",
+      "docs": "https://nirholas.github.io/x402-books/",
+      "skill": "https://github.com/nirholas/x402-books/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-books/blob/main/public/.well-known/x402",
+      "dataSource": "OpenLibrary + Gutendex (keyless, live)",
+      "endpoints": [
+        {
+          "route": "GET /search",
+          "price": "$0.001",
+          "returns": "editions with availability"
+        },
+        {
+          "route": "GET /read/:gutenbergId",
+          "price": "$0.01",
+          "returns": "cleaned full text as chaptered markdown JSON"
+        }
+      ]
+    },
+    {
+      "name": "x402-research",
+      "group": "real-api",
+      "description": "Scholarly search over arXiv, Crossref, and Semantic Scholar — papers, citation graphs, formatted bibliographies",
+      "repository": "https://github.com/nirholas/x402-research",
+      "docs": "https://nirholas.github.io/x402-research/",
+      "skill": "https://github.com/nirholas/x402-research/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-research/blob/main/public/.well-known/x402",
+      "dataSource": "arXiv + Crossref + Semantic Scholar (keyless, live)",
+      "endpoints": [
+        {
+          "route": "GET /search",
+          "price": "$0.002",
+          "returns": "ranked papers"
+        },
+        {
+          "route": "GET /paper/:id",
+          "price": "$0.003",
+          "returns": "metadata + abstract + citation graph"
+        },
+        {
+          "route": "POST /bibliography",
+          "price": "$0.005",
+          "returns": "formatted BibTeX/APA for a DOI list"
+        }
+      ]
+    },
+    {
+      "name": "x402-news-wire",
+      "group": "real-api",
+      "description": "Global news query service over GDELT — article sets, timelines, and delta pulses, per query",
+      "repository": "https://github.com/nirholas/x402-news-wire",
+      "docs": "https://nirholas.github.io/x402-news-wire/",
+      "skill": "https://github.com/nirholas/x402-news-wire/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-news-wire/blob/main/public/.well-known/x402",
+      "dataSource": "GDELT DOC 2.0 (keyless, live)",
+      "endpoints": [
+        {
+          "route": "GET /query",
+          "price": "$0.003",
+          "returns": "article set + volume timeline"
+        },
+        {
+          "route": "GET /pulse",
+          "price": "$0.002",
+          "returns": "delta since caller-provided cursor timestamp"
+        }
+      ]
+    },
+    {
+      "name": "x402-markets",
+      "group": "real-api",
+      "description": "Crypto prices via CoinGecko and SEC filings via EDGAR — real market data per lookup",
+      "repository": "https://github.com/nirholas/x402-markets",
+      "docs": "https://nirholas.github.io/x402-markets/",
+      "skill": "https://github.com/nirholas/x402-markets/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-markets/blob/main/public/.well-known/x402",
+      "dataSource": "CoinGecko free + SEC EDGAR (keyless, live)",
+      "endpoints": [
+        {
+          "route": "GET /price/:coinId",
+          "price": "$0.001",
+          "returns": "spot + 24h stats"
+        },
+        {
+          "route": "GET /filings/:ticker",
+          "price": "$0.003",
+          "returns": "recent filings parsed (form, date, link, summary)"
+        }
+      ]
+    },
+    {
+      "name": "x402-weather-guard",
+      "group": "real-api",
+      "description": "Go/no-go weather decisions for plans — forecasts and verdicts from Open-Meteo/NWS, keyless and live",
+      "repository": "https://github.com/nirholas/x402-weather-guard",
+      "docs": "https://nirholas.github.io/x402-weather-guard/",
+      "skill": "https://github.com/nirholas/x402-weather-guard/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-weather-guard/blob/main/public/.well-known/x402",
+      "dataSource": "Open-Meteo + NWS (keyless, live)",
+      "endpoints": [
+        {
+          "route": "GET /forecast",
+          "price": "$0.001",
+          "returns": "hourly forecast for point+window"
+        },
+        {
+          "route": "POST /decision",
+          "price": "$0.002",
+          "returns": "{verdict: go|no-go|risky, reasoning, alternativeWindows}"
+        }
+      ]
+    },
+    {
+      "name": "x402-carbon",
+      "group": "real-api",
+      "description": "Grid carbon intensity now and best-window scheduling — keyless live data for green agents",
+      "repository": "https://github.com/nirholas/x402-carbon",
+      "docs": "https://nirholas.github.io/x402-carbon/",
+      "skill": "https://github.com/nirholas/x402-carbon/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-carbon/blob/main/public/.well-known/x402",
+      "dataSource": "UK Carbon Intensity API + Open-Meteo (keyless, live)",
+      "endpoints": [
+        {
+          "route": "GET /now",
+          "price": "$0.001",
+          "returns": "current intensity + mix"
+        },
+        {
+          "route": "POST /best-window",
+          "price": "$0.002",
+          "returns": "optimal execution window in next 48h + forecast curve"
+        }
+      ]
+    },
+    {
+      "name": "x402-grocery",
+      "group": "real-api",
+      "description": "Real grocery product search and cart building over the Kroger API, priced per operation",
+      "repository": "https://github.com/nirholas/x402-grocery",
+      "docs": "https://nirholas.github.io/x402-grocery/",
+      "skill": "https://github.com/nirholas/x402-grocery/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-grocery/blob/main/public/.well-known/x402",
+      "dataSource": "Kroger (free dev key; fixture fallback)",
+      "endpoints": [
+        {
+          "route": "GET /products",
+          "price": "$0.002",
+          "returns": "real products with prices + aisle"
+        },
+        {
+          "route": "POST /cart",
+          "price": "$0.005",
+          "returns": "built cart with line prices, totals, substitutions"
+        }
+      ]
+    },
+    {
+      "name": "x402-shop-scout",
+      "group": "real-api",
+      "description": "Live marketplace intelligence over eBay Browse — listings search and is-this-a-deal verdicts",
+      "repository": "https://github.com/nirholas/x402-shop-scout",
+      "docs": "https://nirholas.github.io/x402-shop-scout/",
+      "skill": "https://github.com/nirholas/x402-shop-scout/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-shop-scout/blob/main/public/.well-known/x402",
+      "dataSource": "eBay Browse (free key; fixture fallback)",
+      "endpoints": [
+        {
+          "route": "GET /search",
+          "price": "$0.002",
+          "returns": "live listings"
+        },
+        {
+          "route": "GET /deal-check/:itemId",
+          "price": "$0.002",
+          "returns": "price vs comparable sold/active listings verdict"
+        }
+      ]
+    },
+    {
+      "name": "x402-shipping",
+      "group": "real-api",
+      "description": "Rate shopping and label generation via Shippo/EasyPost test mode — agents ship things, label returned in-response",
+      "repository": "https://github.com/nirholas/x402-shipping",
+      "docs": "https://nirholas.github.io/x402-shipping/",
+      "skill": "https://github.com/nirholas/x402-shipping/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-shipping/blob/main/public/.well-known/x402",
+      "dataSource": "Shippo or EasyPost test mode (free key; fixture fallback)",
+      "endpoints": [
+        {
+          "route": "POST /rates",
+          "price": "$0.003",
+          "returns": "carrier rate table"
+        },
+        {
+          "route": "POST /label",
+          "price": "$0.02",
+          "returns": "label PDF (base64) + tracking number"
+        }
+      ]
+    },
+    {
+      "name": "x402-print-mail",
+      "group": "real-api",
+      "description": "Agents send physical letters and postcards via Lob's test environment — preview PDF returned in-response",
+      "repository": "https://github.com/nirholas/x402-print-mail",
+      "docs": "https://nirholas.github.io/x402-print-mail/",
+      "skill": "https://github.com/nirholas/x402-print-mail/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-print-mail/blob/main/public/.well-known/x402",
+      "dataSource": "Lob test env (free key; fixture fallback)",
+      "endpoints": [
+        {
+          "route": "POST /letters",
+          "price": "$0.05",
+          "returns": "{mailId, preview PDF base64, expectedDelivery}"
+        }
+      ]
+    },
+    {
+      "name": "x402-notify",
+      "group": "real-api",
+      "description": "Real message delivery per-message: Telegram bot messages and SMTP email with delivery receipts in-response",
+      "repository": "https://github.com/nirholas/x402-notify",
+      "docs": "https://nirholas.github.io/x402-notify/",
+      "skill": "https://github.com/nirholas/x402-notify/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-notify/blob/main/public/.well-known/x402",
+      "dataSource": "Telegram Bot API (free token) + SMTP (env-gated; dry-run fallback)",
+      "endpoints": [
+        {
+          "route": "POST /telegram",
+          "price": "$0.002",
+          "returns": "{messageId, chat, deliveredAt}"
+        },
+        {
+          "route": "POST /email",
+          "price": "$0.002",
+          "returns": "SMTP acceptance receipt"
+        }
+      ]
+    },
+    {
+      "name": "x402-domains",
+      "group": "real-api",
+      "description": "Authoritative domain availability and expiry intel via RDAP — keyless, live, per lookup",
+      "repository": "https://github.com/nirholas/x402-domains",
+      "docs": "https://nirholas.github.io/x402-domains/",
+      "skill": "https://github.com/nirholas/x402-domains/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-domains/blob/main/public/.well-known/x402",
+      "dataSource": "RDAP (keyless, live)",
+      "endpoints": [
+        {
+          "route": "GET /check/:domain",
+          "price": "$0.001",
+          "returns": "availability, registrar, expiry, nameservers"
+        },
+        {
+          "route": "POST /bulk",
+          "price": "$0.005",
+          "returns": "up to 50 domains checked"
+        }
+      ]
+    },
+    {
+      "name": "x402-github-bounty",
+      "group": "real-api",
+      "description": "Fund GitHub issues with x402 — signed bounty certificates, merged-PR verification reports, settlement receipts",
+      "repository": "https://github.com/nirholas/x402-github-bounty",
+      "docs": "https://nirholas.github.io/x402-github-bounty/",
+      "skill": "https://github.com/nirholas/x402-github-bounty/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-github-bounty/blob/main/public/.well-known/x402",
+      "dataSource": "GitHub REST (token in env, live)",
+      "endpoints": [
+        {
+          "route": "POST /bounties",
+          "price": "$0.01 + amount",
+          "returns": "signed bounty certificate {issueUrl, amount, terms, expiry}"
+        },
+        {
+          "route": "GET /verify/:bountyId",
+          "price": "$0.002",
+          "returns": "merged-PR verification report (real GitHub state)"
+        },
+        {
+          "route": "POST /settle/:bountyId",
+          "price": "free (auth)",
+          "returns": "signed payout receipt"
+        }
+      ]
+    },
+    {
+      "name": "x402-podcasts",
+      "group": "real-api",
+      "description": "Podcast search and episode intel over the Podcast Index API, per query",
+      "repository": "https://github.com/nirholas/x402-podcasts",
+      "docs": "https://nirholas.github.io/x402-podcasts/",
+      "skill": "https://github.com/nirholas/x402-podcasts/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-podcasts/blob/main/public/.well-known/x402",
+      "dataSource": "Podcast Index (free key; fixture fallback)",
+      "endpoints": [
+        {
+          "route": "GET /search",
+          "price": "$0.002",
+          "returns": "shows + latest episodes"
+        },
+        {
+          "route": "GET /episode/:id",
+          "price": "$0.002",
+          "returns": "episode detail + enclosure URL"
+        }
+      ]
+    },
+    {
+      "name": "x402-skill-md",
+      "group": "infra",
+      "description": "The skill.md toolkit: generate and validate agent-discoverable skill files (the agentres.dev pattern) from OpenAPI specs",
+      "repository": "https://github.com/nirholas/x402-skill-md",
+      "docs": "https://nirholas.github.io/x402-skill-md/",
+      "skill": "https://github.com/nirholas/x402-skill-md/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-skill-md/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained",
+      "endpoints": [
+        {
+          "route": "POST /generate",
+          "price": "$0.01",
+          "returns": "generated skill.md from posted OpenAPI JSON"
+        },
+        {
+          "route": "POST /validate",
+          "price": "$0.002",
+          "returns": "validation report with fixes"
+        }
+      ]
+    },
+    {
+      "name": "x402-skill-registry",
+      "group": "infra",
+      "description": "Searchable registry of x402-paid agent skills — register with a signed listing, agents search per query",
+      "repository": "https://github.com/nirholas/x402-skill-registry",
+      "docs": "https://nirholas.github.io/x402-skill-registry/",
+      "skill": "https://github.com/nirholas/x402-skill-registry/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-skill-registry/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained",
+      "endpoints": [
+        {
+          "route": "POST /register",
+          "price": "$0.01",
+          "returns": "signed listing record"
+        },
+        {
+          "route": "GET /search",
+          "price": "$0.001",
+          "returns": "matching skills with prices + skill.md URLs"
+        },
+        {
+          "route": "GET /skills.json",
+          "price": "free",
+          "returns": "full public index"
+        }
+      ]
+    },
+    {
+      "name": "x402-refund-hold",
+      "group": "infra",
+      "description": "The $0.01 refundable-hold pattern as drop-in Express middleware — charge a hold, auto-refund on failure, ledger included",
+      "repository": "https://github.com/nirholas/x402-refund-hold",
+      "docs": "https://nirholas.github.io/x402-refund-hold/",
+      "skill": "https://github.com/nirholas/x402-refund-hold/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-refund-hold/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained",
+      "endpoints": [
+        {
+          "route": "POST /demo/book",
+          "price": "$0.01 refundable",
+          "returns": "success: confirmation; failure: automatic refund record — both in-response"
+        },
+        {
+          "route": "GET /holds/:id",
+          "price": "free",
+          "returns": "hold status"
+        }
+      ]
+    },
+    {
+      "name": "x402-agent-wallet",
+      "group": "infra",
+      "description": "Wallet policy daemon for agents — budgets, per-merchant caps, approval thresholds, signed policy verdicts",
+      "repository": "https://github.com/nirholas/x402-agent-wallet",
+      "docs": "https://nirholas.github.io/x402-agent-wallet/",
+      "skill": "https://github.com/nirholas/x402-agent-wallet/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-agent-wallet/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained",
+      "endpoints": [
+        {
+          "route": "POST /policy-check",
+          "price": "$0.001",
+          "returns": "signed verdict {allowed, reason, remainingBudget}"
+        },
+        {
+          "route": "GET /ledger",
+          "price": "free (auth)",
+          "returns": "spend history"
+        }
+      ]
+    },
+    {
+      "name": "x402-receipts",
+      "group": "infra",
+      "description": "Receipts and accounting for agent spending — enriched on-chain receipt lookups and ledger exports",
+      "repository": "https://github.com/nirholas/x402-receipts",
+      "docs": "https://nirholas.github.io/x402-receipts/",
+      "skill": "https://github.com/nirholas/x402-receipts/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-receipts/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained + Base RPC (keyless public RPC)",
+      "endpoints": [
+        {
+          "route": "GET /receipt/:txHash",
+          "price": "$0.001",
+          "returns": "enriched receipt (amount, payee, timestamp, linked request metadata)"
+        },
+        {
+          "route": "GET /export",
+          "price": "$0.01",
+          "returns": "full CSV+JSON ledger export"
+        }
+      ]
+    },
+    {
+      "name": "x402-browser-bridge",
+      "group": "infra",
+      "description": "Framework that turns any website flow into an x402-paid API — declare a flow in YAML, Puppeteer executes, artifact returned in-response",
+      "repository": "https://github.com/nirholas/x402-browser-bridge",
+      "docs": "https://nirholas.github.io/x402-browser-bridge/",
+      "skill": "https://github.com/nirholas/x402-browser-bridge/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-browser-bridge/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained (Puppeteer)",
+      "endpoints": [
+        {
+          "route": "POST /run/:flow",
+          "price": "$0.05",
+          "returns": "{extracted data, confirmation screenshot base64, step log}"
+        },
+        {
+          "route": "GET /flows",
+          "price": "free",
+          "returns": "declared flows + their prices"
+        }
+      ]
+    },
+    {
+      "name": "x402-otp-relay",
+      "group": "infra",
+      "description": "The 'code sent to your email' step, solved for agents — paid relay mailboxes, retrieved OTP codes returned in-response",
+      "repository": "https://github.com/nirholas/x402-otp-relay",
+      "docs": "https://nirholas.github.io/x402-otp-relay/",
+      "skill": "https://github.com/nirholas/x402-otp-relay/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-otp-relay/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained (SMTP-in via smtp-server lib)",
+      "endpoints": [
+        {
+          "route": "POST /mailbox",
+          "price": "$0.01",
+          "returns": "{relayAddress, mailboxToken, expiry}"
+        },
+        {
+          "route": "GET /codes/:mailboxToken",
+          "price": "$0.002",
+          "returns": "OTP codes extracted from received mail (live inbox parse)"
+        }
+      ]
+    },
+    {
+      "name": "x402-account-link",
+      "group": "infra",
+      "description": "One-time account linking vault for agent flows — encrypted credential links with scoped, expiring access tokens",
+      "repository": "https://github.com/nirholas/x402-account-link",
+      "docs": "https://nirholas.github.io/x402-account-link/",
+      "skill": "https://github.com/nirholas/x402-account-link/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-account-link/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained (AES-GCM at rest)",
+      "endpoints": [
+        {
+          "route": "POST /links",
+          "price": "$0.01",
+          "returns": "signed link record + proof"
+        },
+        {
+          "route": "GET /links/:id/token",
+          "price": "$0.002",
+          "returns": "scoped expiring access token (auth by owner wallet)"
+        }
+      ]
+    },
+    {
+      "name": "x402-confirmations",
+      "group": "infra",
+      "description": "Normalize any booking confirmation into a portable record — ICS invite and status snapshots per query",
+      "repository": "https://github.com/nirholas/x402-confirmations",
+      "docs": "https://nirholas.github.io/x402-confirmations/",
+      "skill": "https://github.com/nirholas/x402-confirmations/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-confirmations/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained",
+      "endpoints": [
+        {
+          "route": "POST /track",
+          "price": "$0.005",
+          "returns": "normalized confirmation record + ICS base64"
+        },
+        {
+          "route": "GET /status/:id",
+          "price": "$0.001",
+          "returns": "current status snapshot"
+        }
+      ]
+    },
+    {
+      "name": "x402-agent-sandbox",
+      "group": "infra",
+      "description": "A fake town on testnet — mock restaurant, hotel, and store implementing the suite's exact contracts, for end-to-end agent purchase testing",
+      "repository": "https://github.com/nirholas/x402-agent-sandbox",
+      "docs": "https://nirholas.github.io/x402-agent-sandbox/",
+      "skill": "https://github.com/nirholas/x402-agent-sandbox/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-agent-sandbox/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained",
+      "endpoints": [
+        {
+          "route": "GET /town",
+          "price": "free",
+          "returns": "directory of sandbox merchants"
+        },
+        {
+          "route": "POST /restaurant/book | /hotel/book | /store/buy",
+          "price": "$0.001 each",
+          "returns": "deterministic signed confirmations (seeded by request)"
+        }
+      ]
+    },
+    {
+      "name": "x402-mcp-commerce",
+      "group": "infra",
+      "description": "MCP server that gives Claude/GPT agents commerce tools — each tool call pays an upstream x402 endpoint and returns its artifact",
+      "repository": "https://github.com/nirholas/x402-mcp-commerce",
+      "docs": "https://nirholas.github.io/x402-mcp-commerce/",
+      "skill": "https://github.com/nirholas/x402-mcp-commerce/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-mcp-commerce/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained (MCP SDK + x402-fetch)",
+      "endpoints": [
+        {
+          "route": "MCP tools: search_flights, book_table, check_weather, buy_item...",
+          "price": "upstream prices",
+          "returns": "upstream artifact + payment receipt per call"
+        }
+      ]
+    },
+    {
+      "name": "x402-approval-page",
+      "group": "infra",
+      "description": "Human-in-the-loop checkout: agent requests approval above its cap, human pays via the drop-in modal, agent fetches the signed outcome",
+      "repository": "https://github.com/nirholas/x402-approval-page",
+      "docs": "https://nirholas.github.io/x402-approval-page/",
+      "skill": "https://github.com/nirholas/x402-approval-page/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-approval-page/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained + @three-ws/x402-payment-modal",
+      "endpoints": [
+        {
+          "route": "POST /requests",
+          "price": "free",
+          "returns": "approval link for the human"
+        },
+        {
+          "route": "GET /requests/:id",
+          "price": "$0.001",
+          "returns": "signed approval outcome {approved|declined|pending, paymentReceipt?}"
+        }
+      ]
+    },
+    {
+      "name": "x402-group-pay",
+      "group": "frontier",
+      "description": "Split one booking across N wallets — the 6-person dinner problem: pooled x402 contributions with signed receipts and funded proofs",
+      "repository": "https://github.com/nirholas/x402-group-pay",
+      "docs": "https://nirholas.github.io/x402-group-pay/",
+      "skill": "https://github.com/nirholas/x402-group-pay/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-group-pay/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained",
+      "endpoints": [
+        {
+          "route": "POST /pools",
+          "price": "$0.001",
+          "returns": "pool record + join links"
+        },
+        {
+          "route": "POST /pools/:id/pay",
+          "price": "member share",
+          "returns": "signed contribution receipt"
+        },
+        {
+          "route": "GET /pools/:id/proof",
+          "price": "free",
+          "returns": "funded proof once complete"
+        }
+      ]
+    },
+    {
+      "name": "x402-concierge",
+      "group": "frontier",
+      "description": "Meta-agent that composes paid skills — dinner + gift + transit in one request, with per-step receipts, powered by the suite",
+      "repository": "https://github.com/nirholas/x402-concierge",
+      "docs": "https://nirholas.github.io/x402-concierge/",
+      "skill": "https://github.com/nirholas/x402-concierge/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-concierge/blob/main/public/.well-known/x402",
+      "dataSource": "composes suite services via x402-fetch",
+      "endpoints": [
+        {
+          "route": "POST /plan",
+          "price": "$0.02 + passthrough",
+          "returns": "composed itinerary with each sub-call's artifact + receipt inline"
+        }
+      ]
+    },
+    {
+      "name": "x402-rebooker",
+      "group": "frontier",
+      "description": "The cancel-worse-book-better move, automated — scans real inventory (Amadeus/RIDB) against your current booking, returns an actionable improvement report",
+      "repository": "https://github.com/nirholas/x402-rebooker",
+      "docs": "https://nirholas.github.io/x402-rebooker/",
+      "skill": "https://github.com/nirholas/x402-rebooker/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-rebooker/blob/main/public/.well-known/x402",
+      "dataSource": "Amadeus + RIDB (keyed, fixture fallback)",
+      "endpoints": [
+        {
+          "route": "POST /scan",
+          "price": "$0.01",
+          "returns": "better-option report {candidates, savings, rebookSteps} vs posted current booking"
+        }
+      ]
+    },
+    {
+      "name": "x402-price-watch",
+      "group": "frontier",
+      "description": "Pay-per-poll price watching — every check returns a fresh snapshot plus delta vs your cursor (flights via Amadeus, crypto via CoinGecko)",
+      "repository": "https://github.com/nirholas/x402-price-watch",
+      "docs": "https://nirholas.github.io/x402-price-watch/",
+      "skill": "https://github.com/nirholas/x402-price-watch/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-price-watch/blob/main/public/.well-known/x402",
+      "dataSource": "Amadeus (keyed) + CoinGecko (keyless, live)",
+      "endpoints": [
+        {
+          "route": "GET /check",
+          "price": "$0.002",
+          "returns": "snapshot + delta vs caller cursor + trend"
+        }
+      ]
+    },
+    {
+      "name": "x402-negotiator",
+      "group": "frontier",
+      "description": "Agent-to-agent price negotiation instruments — signed offers, counters, and agreements, each returned in-response",
+      "repository": "https://github.com/nirholas/x402-negotiator",
+      "docs": "https://nirholas.github.io/x402-negotiator/",
+      "skill": "https://github.com/nirholas/x402-negotiator/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-negotiator/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained",
+      "endpoints": [
+        {
+          "route": "POST /offers",
+          "price": "$0.001",
+          "returns": "signed offer instrument"
+        },
+        {
+          "route": "POST /counter/:offerId",
+          "price": "$0.001",
+          "returns": "signed counter"
+        },
+        {
+          "route": "POST /accept/:offerId",
+          "price": "$0.001",
+          "returns": "signed agreement with settlement terms"
+        }
+      ]
+    },
+    {
+      "name": "x402-recurring",
+      "group": "frontier",
+      "description": "Standing orders for agents — mandate documents plus a client-side scheduler that pays per run and collects run reports",
+      "repository": "https://github.com/nirholas/x402-recurring",
+      "docs": "https://nirholas.github.io/x402-recurring/",
+      "skill": "https://github.com/nirholas/x402-recurring/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-recurring/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained",
+      "endpoints": [
+        {
+          "route": "POST /mandates",
+          "price": "free",
+          "returns": "mandate document (what, cadence, max price)"
+        },
+        {
+          "route": "POST /execute/:mandateId",
+          "price": "per mandate",
+          "returns": "run report + artifact from the underlying paid call"
+        }
+      ]
+    },
+    {
+      "name": "x402-gift-agent",
+      "group": "frontier",
+      "description": "Fund someone else's agent task — buy a signed gift voucher, recipient's agent redeems it for execution with receipts",
+      "repository": "https://github.com/nirholas/x402-gift-agent",
+      "docs": "https://nirholas.github.io/x402-gift-agent/",
+      "skill": "https://github.com/nirholas/x402-gift-agent/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-gift-agent/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained",
+      "endpoints": [
+        {
+          "route": "POST /gifts",
+          "price": "amount + $0.01 fee",
+          "returns": "signed gift voucher (claim code, task budget, expiry)"
+        },
+        {
+          "route": "POST /claim/:code",
+          "price": "free",
+          "returns": "voucher validation + spendable credit record"
+        }
+      ]
+    },
+    {
+      "name": "x402-transfer-market",
+      "group": "frontier",
+      "description": "Transfer or resell held bookings between wallets — signed listings and reassigned booking tokens, all in-response",
+      "repository": "https://github.com/nirholas/x402-transfer-market",
+      "docs": "https://nirholas.github.io/x402-transfer-market/",
+      "skill": "https://github.com/nirholas/x402-transfer-market/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-transfer-market/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained",
+      "endpoints": [
+        {
+          "route": "POST /list",
+          "price": "$0.005",
+          "returns": "signed listing of a transferable booking token"
+        },
+        {
+          "route": "POST /buy/:listingId",
+          "price": "listing price",
+          "returns": "booking token reassigned to buyer wallet, signed"
+        }
+      ]
+    },
+    {
+      "name": "x402-reputation",
+      "group": "frontier",
+      "description": "Did the merchant actually deliver? Reliability scores computed from signed fulfillment attestations",
+      "repository": "https://github.com/nirholas/x402-reputation",
+      "docs": "https://nirholas.github.io/x402-reputation/",
+      "skill": "https://github.com/nirholas/x402-reputation/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-reputation/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained",
+      "endpoints": [
+        {
+          "route": "GET /score/:merchantId",
+          "price": "$0.001",
+          "returns": "reliability report (fulfillment rate, refund rate, sample attestations)"
+        },
+        {
+          "route": "POST /attest",
+          "price": "$0.001",
+          "returns": "signed attestation record (links payment tx + outcome)"
+        }
+      ]
+    },
+    {
+      "name": "x402-disputes",
+      "group": "frontier",
+      "description": "Arbitration for failed real-world tasks — signed case records with evidence hashes, status snapshots, and signed rulings",
+      "repository": "https://github.com/nirholas/x402-disputes",
+      "docs": "https://nirholas.github.io/x402-disputes/",
+      "skill": "https://github.com/nirholas/x402-disputes/blob/main/skill.md",
+      "manifest": "https://github.com/nirholas/x402-disputes/blob/main/public/.well-known/x402",
+      "dataSource": "self-contained",
+      "endpoints": [
+        {
+          "route": "POST /cases",
+          "price": "$0.01",
+          "returns": "signed case record + evidence hash"
+        },
+        {
+          "route": "GET /cases/:id",
+          "price": "$0.001",
+          "returns": "status snapshot"
+        },
+        {
+          "route": "POST /rule/:id",
+          "price": "free (arbiter auth)",
+          "returns": "signed ruling + refund instruction"
+        }
+      ]
+    }
+  ]
+}
