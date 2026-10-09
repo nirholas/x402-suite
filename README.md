@@ -232,3 +232,7 @@ Across the suite that is **126 paid resources**.
 
 Apache-2.0 for every repo in the suite. The payment modal referenced by the demo pages is a
 separate, proprietary package consumed via CDN — it is never vendored into this code.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=nirholas/x402-suite&type=Date)](https://www.star-history.com/#nirholas/x402-suite&Date)
