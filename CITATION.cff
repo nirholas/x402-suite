@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+title: "x402-suite"
+abstract: "Fifty open-source services that let AI agents buy real things: booking, travel, shopping, and the infrastructure underneath, priced per request over x402"
+license: Apache-2.0
+repository-code: "https://github.com/nirholas/x402-suite"
+url: "https://three.ws"
+authors:
+  - name: three.ws
+    website: "https://three.ws"

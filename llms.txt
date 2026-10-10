@@ -1,0 +1,28 @@
+# x402-suite
+
+> Fifty open-source services that let AI agents buy real things: booking, travel, shopping, and the infrastructure underneath, priced per request over x402
+
+x402-suite is an open-source repository by nirholas, part of the three.ws ecosystem.
+
+## Docs
+
+- [README](https://github.com/nirholas/x402-suite/blob/HEAD/README.md): install, usage and reference
+- [The one rule](https://github.com/nirholas/x402-suite/blob/HEAD/README.md#the-one-rule)
+- [How a paid call actually works](https://github.com/nirholas/x402-suite/blob/HEAD/README.md#how-a-paid-call-actually-works)
+- [Receiving addresses](https://github.com/nirholas/x402-suite/blob/HEAD/README.md#receiving-addresses)
+- [Every repo ships](https://github.com/nirholas/x402-suite/blob/HEAD/README.md#every-repo-ships)
+- [Runs without a single paid API key](https://github.com/nirholas/x402-suite/blob/HEAD/README.md#runs-without-a-single-paid-api-key)
+- [The catalog](https://github.com/nirholas/x402-suite/blob/HEAD/README.md#the-catalog)
+- [For AI agents](https://github.com/nirholas/x402-suite/blob/HEAD/README.md#for-ai-agents)
+- [Start here](https://github.com/nirholas/x402-suite/blob/HEAD/README.md#start-here)
+- [AGENTS.md](https://github.com/nirholas/x402-suite/blob/HEAD/AGENTS.md): guidance for coding agents
+- [Full text for LLMs](https://github.com/nirholas/x402-suite/blob/HEAD/llms-full.txt): the README inlined
+
+## Project
+
+- [Source](https://github.com/nirholas/x402-suite)
+- [Issues](https://github.com/nirholas/x402-suite/issues)
+- [Discussions](https://github.com/nirholas/x402-suite/discussions)
+- [Homepage](https://nirholas.github.io/x402-suite/)
+- [three.ws](https://three.ws): the platform this is part of
+- [All repositories by nirholas](https://github.com/nirholas/nirholas#readme)
