@@ -1,0 +1,18 @@
+{
+  "name": "x402-suite",
+  "version": "0.1.0",
+  "description": "Catalog of fifty open-source x402 services for agents, with a skill to pick the right one and pay safely.",
+  "author": {
+    "name": "nirholas"
+  },
+  "repository": "https://github.com/nirholas/x402-suite",
+  "homepage": "https://nirholas.github.io/x402-suite/",
+  "license": "Apache-2.0",
+  "keywords": [
+    "x402",
+    "catalog",
+    "agentic-commerce",
+    "micropayments",
+    "agents"
+  ]
+}
