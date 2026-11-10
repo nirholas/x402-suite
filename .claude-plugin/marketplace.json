@@ -1,0 +1,22 @@
+{
+  "name": "x402-suite",
+  "owner": {
+    "name": "nirholas"
+  },
+  "description": "Catalog of fifty open-source x402 services for agents, with a skill to pick the right one and pay safely.",
+  "plugins": [
+    {
+      "name": "x402-suite",
+      "source": "./plugins/x402-suite",
+      "description": "Catalog of fifty open-source x402 services for agents, with a skill to pick the right one and pay safely.",
+      "category": "automation",
+      "tags": [
+        "x402",
+        "catalog",
+        "agentic-commerce",
+        "micropayments",
+        "agents"
+      ]
+    }
+  ]
+}
